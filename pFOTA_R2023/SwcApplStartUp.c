@@ -28,6 +28,8 @@
 #include "SwcApplStartUp.h"
 #include "infSwcApplStartUpCfgSwcServiceStartUp.h"
 
+#include "SwcServiceOs.h"
+
 /******************************************************************************/
 /* #DEFINES                                                                   */
 /******************************************************************************/
@@ -96,8 +98,9 @@ FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_
          0
       == infMcalMcuSwcApplStartUp_u32GetWakeupFactor()
    ){
-      infMcalMcuSwcApplStartUp_vSetWakeupFactor(0 /* TBD: WUF0*/);
+      infMcalMcuSwcApplStartUp_vSetWakeupFactor();
    }
+   SwcServiceOs_mInterruptDisable();
 
    return LibAutosarStateMachine_eGaurdTrue;
 }
