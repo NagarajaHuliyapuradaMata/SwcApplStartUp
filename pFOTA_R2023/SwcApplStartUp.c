@@ -28,6 +28,10 @@
 #include "SwcApplStartUp.h"
 #include "infSwcApplStartUpCfgSwcServiceStartUp.h"
 
+#include "CfgSwcServiceStartUp.h"
+#include "infSwcServiceDetSwcServiceStartUp.h"
+#include "infMcalMcuSwcApplStartUp.h"
+#include "infMcalWdgSwcApplStartUp.h"
 #include "SwcServiceOs.h"
 
 /******************************************************************************/
@@ -78,8 +82,6 @@ FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_
 FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_eHandlerEventFailsafeUpdaterSearchNext             (Type_LibAutosarStateMachine_tptrContext const ctptrContext, Type_LibAutosarStateMachine_eEvent leEvent){UNUSED(ctptrContext); UNUSED(leEvent); return LibAutosarStateMachine_eGaurdTrue;}
 FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_eHandlerEventInit_Entry                            (Type_LibAutosarStateMachine_tptrContext const ctptrContext, Type_LibAutosarStateMachine_eEvent leEvent){UNUSED(ctptrContext); UNUSED(leEvent); return LibAutosarStateMachine_eGaurdTrue;}
 
-#include "infMcalMcuSwcApplStartUp.h"
-#include "infSwcServiceDetSwcServiceStartUp.h"
 FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_eHandlerEventPowerOn_Entry(
       Type_LibAutosarStateMachine_tptrContext const ctptrContext
    ,  Type_LibAutosarStateMachine_eEvent            leEvent
@@ -87,20 +89,28 @@ FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_
    UNUSED(ctptrContext);
    UNUSED(leEvent);
 
-   SwcServiceDet_tReportError(
-         SwcServiceDet_eIdModuleSwcServiceStartUp
-      ,  infSwcServiceDetSwcServiceStartUp_dIdInstance_TBD
-      ,  infSwcServiceDetSwcServiceStartUp_dIdApi_TBD
-      ,  SwcApplStartUp_eError_None
-   );
-
    if(
          0
       == infMcalMcuSwcApplStartUp_u32GetWakeupFactor()
    ){
       infMcalMcuSwcApplStartUp_vSetWakeupFactor();
    }
+
    SwcServiceOs_mInterruptDisable();
+
+   if(
+         (const Type_SwcServiceStartUp_stHeader*)CfgSwcServiceStartUp_dAddressHeader
+      != (const Type_SwcServiceStartUp_stHeader*)(&CfgSwcServiceStartUp_cstHeader)
+   ){
+      SwcServiceDet_tReportError(
+            SwcServiceDet_eIdModuleSwcServiceStartUp
+         ,  infSwcServiceDetSwcServiceStartUp_dIdInstance_TBD
+         ,  infSwcServiceDetSwcServiceStartUp_dIdApi_TBD
+         ,  SwcServiceStartUp_eError_ParameterOutOfRange
+      );
+   }
+
+   infMcalWdgSwcApplStartUp_vClrFlagInit();
 
    return LibAutosarStateMachine_eGaurdTrue;
 }
