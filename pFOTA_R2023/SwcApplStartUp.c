@@ -31,6 +31,7 @@
 #include "CfgSwcServiceStartUp.h"
 #include "infSwcServiceDetSwcServiceStartUp.h"
 #include "infMcalMcuSwcApplStartUp.h"
+#include "infMcalFlsSwcApplStartUp.h"
 #include "infMcalWdgSwcApplStartUp.h"
 #include "SwcServiceOs.h"
 
@@ -111,6 +112,7 @@ FUNC(Type_LibAutosarStateMachine_eGaurd, SWCSERVICESTARTUP_CODE) SwcApplStartUp_
    }
 
    infMcalWdgSwcApplStartUp_vClrFlagInit();
+   infMcalFlsSwcApplStartUp_vInitPowerOn();
 
    return LibAutosarStateMachine_eGaurdTrue;
 }
